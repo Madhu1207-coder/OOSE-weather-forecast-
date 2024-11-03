@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Tracker</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, #b5d8f7, #ffffff); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .weather-container {
+            background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 300px;
+            backdrop-filter: blur(10px); /* Blur effect */
+        }
+        
+        .location {
+            margin-bottom: 20px;
+        }
+        
+        .location label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .location input {
+            padding: 8px;
+            margin-top: 5px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .location button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .location button:hover {
+            background-color: #45a049;
+        }
+        
+        .weather-info {
+            text-align: left;
+            margin-top: 20px;
+        }
+        
+        .weather-info p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        h2 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-container">
+        <h2>Weather Tracker</h2>
+        <div class="location">
+            <label for="location">Enter City or State:</label>
+            <input type="text" id="location" placeholder="Enter city or state name">
+            <button onclick="getWeather()">Track Weather</button>
+        </div>
+        <div class="weather-info" id="weather-info">
+            <!-- Weather information will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        function getWeather() {
+            const location = document.getElementById('location').value.trim(); // Trim whitespace from input
+            const apiKey = '0aa45cc1888e4693b3c144229241809'; // Replace with your WeatherAPI key
+            const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${location}`;
+
+            fetch(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Location not found');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data); // Log the fetched data (for testing)
+                    const weatherInfo = document.getElementById('weather-info');
+                    weatherInfo.innerHTML = `
+                        <p><strong>Location:</strong> ${data.location.name}, ${data.location.country}</p>
+                        <p><strong>Temperature:</strong> ${data.current.temp_c} &deg;C</p>
+                        <p><strong>Weather:</strong> ${data.current.condition.text}</p>
+                        <p><strong>Wind Speed:</strong> ${data.current.wind_kph} km/h</p>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    const weatherInfo = document.getElementById('weather-info');
+                    weatherInfo.innerHTML = `<p>${error.message}</p>`;
+                });
+        }
+    </script>
+</body>
+</html>
